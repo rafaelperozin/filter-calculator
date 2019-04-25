@@ -6,4 +6,4 @@ The user just needs to fill the budget and area of their roof and the calculator
 
 This is for a Magento 1.9 store and I had some limits of languages version. Then I used jQuery and ES5 to guarantee that will works on all devices and browsers.
 
-[[https://github.com/rafaelperozin/filter-calculator/blob/master/filter-calculator-prnt.png|alt=the print of sidebar with m²/ft² calculator filter]]
+[[https://github.com/rafaelperozin/filter-calculator/blob/master/filter-calculator-prnt.png|alt=the-print-of-sidebar-with-m²/ft²-calculator-filter]]
