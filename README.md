@@ -1,4 +1,4 @@
-# filter-calculator
+# Filter per m²/ft² using calculator
 
 "What's in your budget?" filter for an e-commerce category page.
 The idea is filtering the product list results by m² or ft².
