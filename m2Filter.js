@@ -15,6 +15,8 @@ var areField = '.areCalcField';
 var meaField = '.meaCalcField';
 var calcId = '#m2Filter';
 var curFilter = '.currentWrapper';
+var calcResult = '.resCalcFilter';
+var filtersBlock = '.amshopby-filters-left .block-content';
 var txtBeforeResult = 'Base on your budget and area we identify that you can spent maximum:';
 var txtAfterResult = 'We already giltered the current list by price per m²/ft² to you.';
 
@@ -50,8 +52,6 @@ function calcAndFilter(budget, area, measure) {
     localStorage['area'] = area;
     localStorage['measure'] = measure;
     localStorage['pricePerMeasure'] = pricePerMeasure;
-    // store position to keep it after reload
-    localStorage["posStorage"] = jQuery(curFilter).offset().top;
 
     // build new url to make the filter
     if (paraInUrl.length > 1) {
@@ -95,12 +95,9 @@ function checkEmpty(budget, area, measure) {
         }
 
     } else {
-
         // filter results
         calcAndFilter(budget, area, measure);
-
     }
-
 }
 
 function inputOldValues(budField, areField, meaField) {
@@ -122,28 +119,47 @@ function inputOldValues(budField, areField, meaField) {
 
 }
 
-function lastCalculation(calcURL, calcData, pagePosition) {
+function lastCalculation(calcURL, calcData) {
 
     // if calculator was used, keep the values on the form
     if (calcURL) {
         if (calcData) {
-
-            // get the current filter height
-            var curFilterHeigh = jQuery('.currentWrapper').outerHeight(true);
-            // scroll screen to show current filter and form on top
-            if (pagePosition) {
-                jQuery(window).scrollTop(pagePosition - curFilterHeigh);
-                // clean the local storage after use it
-                localStorage["posStorage"] = '';
-            }
 
             // auto fill the fields with current values
             inputOldValues(budField, areField, meaField);
 
             // show results
             var mea = localStorage['measure'].slice(0, -1);
-            // insert highlighted text
-            jQuery(calcId).append('<div class="resCalcFilter"><p class="resCalcFilter-firstmsg">' + txtBeforeResult + '</p><p class="resCalcFilter-result">£' + localStorage['pricePerMeasure'] + ' per ' + mea + '²</p></div>');
+
+            //verify desktop or mobile
+            if (window.mobile === 0 && window.tablet === false) {
+                // desktop view
+
+                // insert highlighted text after form
+                jQuery(calcId).append('<div class="resCalcFilter"><p class="resCalcFilter-firstmsg">' + txtBeforeResult + '</p><p class="resCalcFilter-result">£' + localStorage['pricePerMeasure'] + ' per ' + mea + '²</p></div>');
+                
+                // get the current filter position and height
+                var pagPos = jQuery(curFilter).offset().top;
+                var curFilterHeigh = jQuery(curFilter).outerHeight(true);
+
+            } else {
+                // mobile and tablet view
+
+                // insert highlighted text after current filter
+                jQuery(curFilter).prepend('<div class="resCalcFilter"><p class="resCalcFilter-firstmsg">' + txtBeforeResult + '</p><p class="resCalcFilter-result">£' + localStorage['pricePerMeasure'] + ' per ' + mea + '²</p></div>');
+                jQuery(calcResult).css('margin-bottom', '2rem');
+
+                // keep opened refine filters
+                // jQuery(filtersBlock).show();
+                //rebuildMobFilter('div.mobHandle.gtmTrack0038');
+
+                // get the current filter position and height
+                var curFilterHeigh = jQuery(curFilter).outerHeight(true);
+                var pagPos = jQuery('.mobFilterBtn').offset().top;
+            }
+
+            // scroll screen to show current filter and form on top
+            jQuery(window).scrollTop((pagPos - 10) - curFilterHeigh);
         }
     }
 }
@@ -152,10 +168,9 @@ jQuery(document).ready(function () {
 
     var calcURL = window.location.href.split(priParameter)[1];
     var calcData = localStorage['budget'];
-    var pagePosition = localStorage["posStorage"];
 
     // verify if the current calculator filter and make some actions
-    lastCalculation(calcURL, calcData, pagePosition);
+    lastCalculation(calcURL, calcData);
 
     jQuery(calcId).on('submit', function (e) {
         
